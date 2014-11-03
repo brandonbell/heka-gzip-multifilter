@@ -1,10 +1,10 @@
 heka-gzip-multifilter
 =========
-Heka Filter to combine streams based on a tag and Gzip them. [Mozilla Heka](http://hekad.readthedocs.org/)
+Heka Filter to combine streams separately based on a tag and Gzip them. [Mozilla Heka](http://hekad.readthedocs.org/)
 
 GzipMultiFilter
 ==========
-GzipMultiFilter aggregates streams based on a defined tag and Gzips them after a configurable time / size is hit.  
+GzipMultiFilter aggregates streams separately based on a defined tag and Gzips them after a configurable time / size is hit.  
 This plugin should be treated as experimental as it has not been tested in a high volume environment.  
 
 Note: Each payload that is output will add Field[Partition] = `field_tag`.  (i.e. Field[Partition] = '2014-01-01' if stream is being split by date) 
