@@ -102,8 +102,11 @@ func (f *GzipMultiFilter) receiver(fr FilterRunner, h PluginHelper, encoder Enco
             case pack, ok = <-inChan:
                 if !ok {
                     // Closed inChan => we're shutting down, flush data
-                    for _, value := range batches {
+                    for key, value := range batches {
+                        writers[key].Flush()
                         if value.Len() > 0 {
+                            writers[key].Close()
+                            f.tagChan <- key
                             f.batchChan <- value.Bytes()
                         }
                     }
