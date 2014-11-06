@@ -103,7 +103,6 @@ func (f *GzipMultiFilter) receiver(fr FilterRunner, h PluginHelper, encoder Enco
                 if !ok {
                     // Closed inChan => we're shutting down, flush data
                     for key, value := range batches {
-                        writers[key].Flush()
                         if value.Len() > 0 {
                             writers[key].Close()
                             f.tagChan <- key
@@ -133,7 +132,7 @@ func (f *GzipMultiFilter) receiver(fr FilterRunner, h PluginHelper, encoder Enco
                             f.tagChan <- partition
                             f.batchChan <- batches[partition].Bytes()
                             batches[partition].Reset()
-                            writers[partition] = gzip.NewWriter(batches[partition])
+                            writers[partition].Reset(batches[partition])
                         }
                     }
                     outBytes = outBytes[:0]
@@ -146,6 +145,9 @@ func (f *GzipMultiFilter) receiver(fr FilterRunner, h PluginHelper, encoder Enco
                         writers[key].Close()
                         f.tagChan <- key
                         f.batchChan <- value.Bytes()
+                        batches[key].Reset()
+                        writers[key].Reset(batches[key])
+                    } else { 
                         delete(batches, key)
                         delete(writers, key)
                     }
