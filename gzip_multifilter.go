@@ -7,7 +7,7 @@ import (
     . "github.com/mozilla-services/heka/pipeline"
     "bytes"
     "compress/gzip"
-    "code.google.com/p/go-uuid/uuid"
+    "github.com/pborman/uuid"
     "sync"
 )
 
