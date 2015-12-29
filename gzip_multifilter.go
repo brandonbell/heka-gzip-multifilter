@@ -64,7 +64,7 @@ func (f *GzipMultiFilter) committer(fr FilterRunner, h PluginHelper, wg *sync.Wa
     tag = f.GzipTag
 
     for outBatch = range f.batchChan {
-        pack := h.PipelinePack(f.msgLoopCount)
+        pack, _ := h.PipelinePack(f.msgLoopCount)
         if pack == nil {
             fr.LogError(fmt.Errorf("exceeded MaxMsgLoops = %d",
                 h.PipelineConfig().Globals.MaxMsgLoops))
@@ -137,8 +137,9 @@ func (f *GzipMultiFilter) receiver(fr FilterRunner, h PluginHelper, encoder Enco
                     }
                     outBytes = outBytes[:0]
                 } 
-                pack.Recycle()
-
+                fr.UpdateCursor(pack.QueueCursor)
+                pack.Recycle(nil)
+                
             case <- ticker:
                 for key, value := range batches {
                     if value.Len() > 0 {
